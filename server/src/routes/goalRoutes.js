@@ -4,7 +4,7 @@ const protect = require("../middleware/authMiddleware");
 
 const upload = require("../middleware/uploadMiddleware");
 
-const { createGoal,getGroupGoals, updateGoalStatus, verifyGoal, getMyStats, uploadProof, deleteGoal,} = require("../controllers/goalController");
+const { createGoal,getGroupGoals, updateGoalStatus, verifyGoal, getMyStats, getMyStreak, uploadProof, deleteGoal,} = require("../controllers/goalController");
 
 const router = express.Router();
 router.get(
@@ -18,6 +18,12 @@ router.get(
   "/stats/me",
   protect,
   getMyStats
+);
+
+router.get(
+  "/streak/me",
+  protect,
+  getMyStreak
 );
 
 router.put(

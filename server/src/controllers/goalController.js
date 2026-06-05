@@ -270,6 +270,63 @@ const getMyStats = async (req, res) => {
     }
 };
 
+const getMyStreak = async (req, res) => {
+    try {
+
+        const [goals] = await db.query(
+            `SELECT DISTINCT DATE_FORMAT(goal_date, '%Y-%m-%d') AS goal_date
+     FROM goals
+     WHERE user_id = ?
+     AND verified_by IS NOT NULL
+     ORDER BY goal_date DESC`,
+            [req.user.id]
+        );
+
+        const dates = goals.map(
+            (goal) => goal.goal_date
+        );
+
+        let currentStreak = 0;
+
+        let checkDate = new Date();
+
+        while (true) {
+
+            const dateString =
+                checkDate
+                    .toISOString()
+                    .split("T")[0];
+
+
+            if (dates.includes(dateString)) {
+
+                currentStreak++;
+
+                checkDate.setDate(
+                    checkDate.getDate() - 1
+                );
+
+            } else {
+                break;
+            }
+        }
+
+        res.json({
+            success: true,
+            currentStreak,
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
+};
+
 const deleteGoal = async (req, res) => {
     try {
 
@@ -318,6 +375,7 @@ module.exports = {
     updateGoalStatus,
     verifyGoal,
     getMyStats,
+    getMyStreak,
     uploadProof,
     deleteGoal,
 };

@@ -9,6 +9,7 @@ const {
   getGroupDetails,
   removeMember,
   deleteGroup,
+  leaveGroup,
 } = require("../controllers/groupController");
 
 const router = express.Router();
@@ -47,6 +48,12 @@ router.get(
   "/:groupId",
   protect,
   getGroupDetails
+);
+
+router.delete(
+  "/:groupId/leave",
+  protect,
+  leaveGroup
 );
 
 module.exports = router;

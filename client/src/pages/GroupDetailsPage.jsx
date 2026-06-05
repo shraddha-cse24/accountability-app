@@ -5,6 +5,7 @@ import { createGoal, updateGoalStatus, verifyGoal, deleteGoal, } from "../servic
 import { uploadProof } from "../services/proofService";
 import {
     deleteGroup,
+    leaveGroup,
 } from "../services/groupService";
 
 function GroupDetailsPage() {
@@ -232,6 +233,41 @@ function GroupDetailsPage() {
             }
         };
 
+    const handleLeaveGroup =
+        async () => {
+
+            const confirmed =
+                window.confirm(
+                    "Leave this group?"
+                );
+
+            if (!confirmed) return;
+
+            try {
+
+                await leaveGroup(
+                    groupId
+                );
+
+                alert(
+                    "You left the group"
+                );
+
+                navigate(
+                    "/dashboard"
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    error.response?.data?.message ||
+                    "Failed"
+                );
+            }
+        };
+
     if (!groupData) {
         return <h1>Loading...</h1>;
     }
@@ -262,9 +298,19 @@ function GroupDetailsPage() {
                             <button
                                 onClick={handleDeleteGroup}
                                 title="Delete Group"
-                                className="px-3 py-2 rounded-xl bg-rose-100 text-rose-700 text-sm font-medium hover:bg-rose-200 hover:text-rose-800 transition"
+                                className="px-3 py-2 rounded-xl bg-rose-200 text-rose-700 text-sm font-medium hover:bg-rose-300 hover:text-rose-800 transition"
                             >
                                 Delete
+                            </button>
+                        )}
+
+                        {!isOwner && (
+                            <button
+                                onClick={handleLeaveGroup}
+                                title="Leave Group"
+                                className="px-3 py-2 rounded-xl bg-rose-200 text-rose-700 text-sm font-medium hover:bg-rose-300 hover:text-rose-800 transition"
+                            >
+                                Leave
                             </button>
                         )}
 

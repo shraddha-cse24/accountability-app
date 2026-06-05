@@ -276,6 +276,50 @@ const deleteGroup = async (req, res) => {
     }
 };
 
+const leaveGroup = async (req, res) => {
+    try {
+
+        const groupId = req.params.groupId;
+
+        const [ownerCheck] = await db.query(
+            `SELECT * FROM group_members
+             WHERE group_id = ?
+             AND user_id = ?
+             AND role = 'owner'`,
+            [groupId, req.user.id]
+        );
+
+        if (ownerCheck.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Owner cannot leave group. Delete it instead."
+            });
+        }
+
+        await db.query(
+            `DELETE FROM group_members
+             WHERE group_id = ?
+             AND user_id = ?`,
+            [groupId, req.user.id]
+        );
+
+        res.json({
+            success: true,
+            message: "You left the group",
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
+};
+
 module.exports = {
     createGroup,
     addMember,
@@ -283,4 +327,5 @@ module.exports = {
     getGroupDetails,
     removeMember,
     deleteGroup,
+    leaveGroup,
 };

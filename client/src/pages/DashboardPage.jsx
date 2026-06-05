@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMyGroups, createGroup, } from "../services/groupService";
 import { useNavigate } from "react-router-dom";
-import { getMyStats } from "../services/statsService";
+import { getMyStats, getMyStreak, } from "../services/statsService";
 import {
   getMyInvitations,
   acceptInvitation,
@@ -14,6 +14,11 @@ function DashboardPage() {
     useState([]);
   const [groupName, setGroupName] = useState("");
   const [stats, setStats] = useState(null);
+  const [groupDescription,
+    setGroupDescription] =
+    useState("");
+  const [streak, setStreak] =
+    useState(null);
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -24,6 +29,7 @@ function DashboardPage() {
   useEffect(() => {
     fetchGroups();
     fetchStats();
+    fetchStreak();
     fetchInvitations();
   }, []);
 
@@ -46,13 +52,25 @@ function DashboardPage() {
     }
   };
 
+  const fetchStreak =
+    async () => {
+      try {
+
+        const data = await getMyStreak();
+        setStreak(data);
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
   const fetchInvitations =
     async () => {
       try {
         const data =
           await getMyInvitations();
 
-          console.log(data);
+        console.log(data);
 
         setInvitations(
           data.invitations
@@ -97,10 +115,11 @@ function DashboardPage() {
     try {
       await createGroup({
         name: groupName,
-        description: "",
+        description: groupDescription,
       });
 
       setGroupName("");
+      setGroupDescription("");
 
       fetchGroups();
 
@@ -186,6 +205,30 @@ function DashboardPage() {
           </div>
         )}
 
+        {streak && (
+          <div className="mb-6 flex justify-center">
+
+            <div className="flex items-center gap-4 px-6 py-4 rounded-2xl bg-orange-50 border border-orange-200 shadow-sm">
+
+              <div className="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center text-2xl">
+                🔥
+              </div>
+
+              <div>
+                <p className="text-sm text-slate-500">
+                  Current Streak
+                </p>
+
+                <p className="text-2xl font-bold text-slate-900">
+                  {streak.currentStreak}
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
         {/* Stats */}
         {stats && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
@@ -243,24 +286,34 @@ function DashboardPage() {
             Start a new accountability group with your friends.
           </p>
 
-          <div className="flex gap-3">
-            <input
-              type="text"
-              placeholder="Group Name"
-              value={groupName}
-              onChange={(e) =>
-                setGroupName(e.target.value)
-              }
-              className="flex-1 px-4 py-3 border border-rose-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-            />
+          <input
+            type="text"
+            placeholder="Group Name"
+            value={groupName}
+            onChange={(e) =>
+              setGroupName(e.target.value)
+            }
+            className="w-full mb-3 px-4 py-3 border border-rose-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          />
 
-            <button
-              onClick={handleCreateGroup}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white font-medium hover:shadow-lg hover:scale-[1.02] transition"
-            >
-              Create Group
-            </button>
-          </div>
+          <textarea
+            placeholder="Group Description (optional)"
+            value={groupDescription}
+            onChange={(e) =>
+              setGroupDescription(
+                e.target.value
+              )
+            }
+            rows={3}
+            className="w-full mb-4 px-4 py-3 border border-rose-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          />
+
+          <button
+            onClick={handleCreateGroup}
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white font-medium hover:shadow-lg hover:scale-[1.02] transition"
+          >
+            Create Group
+          </button>
         </div>
 
         {/* Groups Section */}

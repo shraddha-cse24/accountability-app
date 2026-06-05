@@ -16,3 +16,23 @@ export const getMyStats = async () => {
 
   return response.data;
 };
+
+export const getMyStreak =
+  async () => {
+
+    const token =
+      localStorage.getItem("token");
+
+    const response =
+      await axios.get(
+        "http://localhost:5000/api/goals/streak/me",
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`,
+          },
+        }
+      );
+
+    return response.data;
+  };
