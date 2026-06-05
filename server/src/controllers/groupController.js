@@ -103,74 +103,177 @@ const addMember = async (req, res) => {
 };
 
 const getMyGroups = async (req, res) => {
-  try {
+    try {
 
-    const [groups] = await db.query(
-      `SELECT groups.*
+        const [groups] = await db.query(
+            `SELECT groups.*
        FROM groups
        JOIN group_members
        ON groups.id = group_members.group_id
        WHERE group_members.user_id = ?`,
-      [req.user.id]
-    );
+            [req.user.id]
+        );
 
-    res.json({
-      success: true,
-      groups,
-    });
+        res.json({
+            success: true,
+            groups,
+        });
 
-  } catch (error) {
-    console.error(error);
+    } catch (error) {
+        console.error(error);
 
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
 };
 
 const getGroupDetails = async (req, res) => {
-  try {
-    const groupId = req.params.groupId;
+    try {
+        const groupId = req.params.groupId;
 
-    const [group] = await db.query(
-      "SELECT * FROM groups WHERE id = ?",
-      [groupId]
-    );
+        const [group] = await db.query(
+            "SELECT * FROM groups WHERE id = ?",
+            [groupId]
+        );
 
-    const [members] = await db.query(
-      `SELECT users.id, users.name, users.email
-       FROM group_members
-       JOIN users
-       ON users.id = group_members.user_id
-       WHERE group_members.group_id = ?`,
-      [groupId]
-    );
+        const [members] = await db.query(
+            `SELECT
+    users.id,
+    users.name,
+    users.email,
+    group_members.role
+   FROM group_members
+   JOIN users
+   ON users.id = group_members.user_id
+   WHERE group_members.group_id = ?`,
+            [groupId]
+        );
 
-    const [goals] = await db.query(
-      `SELECT goals.*, users.name as user_name
+        const [goals] = await db.query(
+            `SELECT goals.*, users.name as user_name
        FROM goals
        JOIN users
        ON users.id = goals.user_id
        WHERE goals.group_id = ?`,
-      [groupId]
-    );
+            [groupId]
+        );
 
-    res.json({
-      success: true,
-      group: group[0],
-      members,
-      goals,
-    });
+        res.json({
+            success: true,
+            group: group[0],
+            members,
+            goals,
+        });
 
-  } catch (error) {
-    console.error(error);
+    } catch (error) {
+        console.error(error);
 
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
+};
+
+const removeMember = async (req, res) => {
+    try {
+
+        const groupId = req.params.groupId;
+        const memberId = req.params.memberId;
+
+        const [ownerCheck] = await db.query(
+            `SELECT * FROM group_members
+             WHERE group_id = ?
+             AND user_id = ?
+             AND role = 'owner'`,
+            [groupId, req.user.id]
+        );
+
+        if (ownerCheck.length === 0) {
+            return res.status(403).json({
+                success: false,
+                message: "Only owner can remove members",
+            });
+        }
+
+        await db.query(
+            `DELETE FROM group_members
+             WHERE group_id = ?
+             AND user_id = ?`,
+            [groupId, memberId]
+        );
+
+        res.json({
+            success: true,
+            message: "Member removed",
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
+};
+
+const deleteGroup = async (req, res) => {
+    try {
+
+        const groupId = req.params.groupId;
+
+        const [ownerCheck] = await db.query(
+            `SELECT * FROM group_members
+             WHERE group_id = ?
+             AND user_id = ?
+             AND role = 'owner'`,
+            [groupId, req.user.id]
+        );
+
+        if (ownerCheck.length === 0) {
+            return res.status(403).json({
+                success: false,
+                message:
+                    "Only owner can delete group",
+            });
+        }
+
+        await db.query(
+            "DELETE FROM goals WHERE group_id = ?",
+            [groupId]
+        );
+
+        await db.query(
+            "DELETE FROM group_members WHERE group_id = ?",
+            [groupId]
+        );
+
+        await db.query(
+            "DELETE FROM group_invitations WHERE group_id = ?",
+            [groupId]
+        );
+
+        await db.query(
+            "DELETE FROM groups WHERE id = ?",
+            [groupId]
+        );
+
+        res.json({
+            success: true,
+            message: "Group deleted",
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
 };
 
 module.exports = {
@@ -178,4 +281,6 @@ module.exports = {
     addMember,
     getMyGroups,
     getGroupDetails,
+    removeMember,
+    deleteGroup,
 };

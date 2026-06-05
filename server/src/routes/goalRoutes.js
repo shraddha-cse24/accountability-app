@@ -4,7 +4,7 @@ const protect = require("../middleware/authMiddleware");
 
 const upload = require("../middleware/uploadMiddleware");
 
-const { createGoal,getGroupGoals, updateGoalStatus, verifyGoal, getMyStats, uploadProof,} = require("../controllers/goalController");
+const { createGoal,getGroupGoals, updateGoalStatus, verifyGoal, getMyStats, uploadProof, deleteGoal,} = require("../controllers/goalController");
 
 const router = express.Router();
 router.get(
@@ -30,6 +30,12 @@ router.put(
   "/:goalId/verify",
   protect,
   verifyGoal
+);
+
+router.delete(
+  "/:goalId",
+  protect,
+  deleteGoal
 );
 
 router.post(

@@ -7,6 +7,8 @@ const {
   addMember,
   getMyGroups,
   getGroupDetails,
+  removeMember,
+  deleteGroup,
 } = require("../controllers/groupController");
 
 const router = express.Router();
@@ -27,6 +29,18 @@ router.post(
   "/:groupId/add-member",
   protect,
   addMember
+);
+
+router.delete(
+  "/:groupId/member/:memberId",
+  protect,
+  removeMember
+);
+
+router.delete(
+  "/:groupId",
+  protect,
+  deleteGroup
 );
 
 router.get(

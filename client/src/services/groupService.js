@@ -32,3 +32,24 @@ export const createGroup = async (groupData) => {
 
   return response.data;
 };
+
+export const deleteGroup = async (
+  groupId
+) => {
+
+  const token =
+    localStorage.getItem("token");
+
+  const response =
+    await axios.delete(
+      `${API_URL}/${groupId}`,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${token}`,
+        },
+      }
+    );
+
+  return response.data;
+};

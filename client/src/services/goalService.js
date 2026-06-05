@@ -55,3 +55,18 @@ export const verifyGoal = async (goalId) => {
 
   return response.data;
 };
+
+export const deleteGoal = async (goalId) => {
+  const token = localStorage.getItem("token");
+
+  const response = await axios.delete(
+    `${API_URL}/${goalId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.data;
+};

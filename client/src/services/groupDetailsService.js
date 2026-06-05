@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/groups";
+const INVITATION_URL =
+  "http://localhost:5000/api/invitations";
 
 export const getGroupDetails = async (groupId) => {
   const token = localStorage.getItem("token");
@@ -24,7 +26,7 @@ export const addMember = async (
   const token = localStorage.getItem("token");
 
   const response = await axios.post(
-    `${API_URL}/${groupId}/add-member`,
+    `${INVITATION_URL}/${groupId}`,
     { email },
     {
       headers: {
@@ -32,6 +34,28 @@ export const addMember = async (
       },
     }
   );
+
+  return response.data;
+};
+
+export const removeMember = async (
+  groupId,
+  memberId
+) => {
+
+  const token =
+    localStorage.getItem("token");
+
+  const response =
+    await axios.delete(
+      `${API_URL}/${groupId}/member/${memberId}`,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${token}`,
+        },
+      }
+    );
 
   return response.data;
 };

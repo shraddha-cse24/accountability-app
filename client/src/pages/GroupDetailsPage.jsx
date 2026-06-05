@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getGroupDetails, addMember, } from "../services/groupDetailsService";
-import { createGoal, updateGoalStatus, verifyGoal, } from "../services/goalService";
+import { useParams, useNavigate, } from "react-router-dom";
+import { getGroupDetails, addMember, removeMember, } from "../services/groupDetailsService";
+import { createGoal, updateGoalStatus, verifyGoal, deleteGoal, } from "../services/goalService";
 import { uploadProof } from "../services/proofService";
+import {
+    deleteGroup,
+} from "../services/groupService";
 
 function GroupDetailsPage() {
     const { groupId } = useParams();
+    const navigate = useNavigate();
 
     const [groupData, setGroupData] = useState(null);
     const [goalTitle, setGoalTitle] = useState("");
@@ -16,6 +20,15 @@ function GroupDetailsPage() {
 
     const currentUserId =
         Number(localStorage.getItem("userId"));
+
+    const currentMember =
+        groupData?.members?.find(
+            (member) =>
+                member.id === currentUserId
+        );
+
+    const isOwner =
+        currentMember?.role === "owner";
 
     useEffect(() => {
         fetchGroup();
@@ -75,6 +88,29 @@ function GroupDetailsPage() {
         }
     };
 
+    const handleDeleteGoal = async (
+        goalId
+    ) => {
+
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this goal?"
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            await deleteGoal(goalId);
+
+            fetchGroup();
+
+            alert("Goal deleted");
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const handleUploadProof = async (
         goalId
     ) => {
@@ -106,181 +142,415 @@ function GroupDetailsPage() {
 
     const handleAddMember = async () => {
         try {
+
             await addMember(
                 groupId,
                 memberEmail
             );
+
+            alert("Invitation sent");
 
             setMemberEmail("");
 
             fetchGroup();
 
         } catch (error) {
+
             console.error(error);
+
+            alert(
+                error.response?.data?.message ||
+                "Failed to send invitation"
+            );
         }
     };
+
+    const handleRemoveMember = async (
+        memberId
+    ) => {
+
+        const confirmed = window.confirm(
+            "Remove this member from the group?"
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            await removeMember(
+                groupId,
+                memberId
+            );
+
+            fetchGroup();
+
+            alert("Member removed");
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                error.response?.data?.message ||
+                "Failed to remove member"
+            );
+        }
+    };
+
+    const handleDeleteGroup =
+        async () => {
+
+            const confirmed =
+                window.confirm(
+                    "Delete this group permanently?"
+                );
+
+            if (!confirmed) return;
+
+            try {
+
+                await deleteGroup(
+                    groupId
+                );
+
+                alert(
+                    "Group deleted"
+                );
+
+                navigate(
+                    "/dashboard"
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    error.response?.data?.message ||
+                    "Delete failed"
+                );
+            }
+        };
 
     if (!groupData) {
         return <h1>Loading...</h1>;
     }
 
     return (
-        <div className="p-6">
-            <h1 className="text-3xl font-bold">
-                {groupData.group.name}
-            </h1>
+        <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-white">
+            <div className="max-w-7xl mx-auto px-6 py-10">
 
-            <h2 className="text-xl mt-6 mb-2">
-                <div className="flex gap-2 mt-4 mb-4">
-                    <input
-                        type="text"
-                        placeholder="Enter Goal"
-                        value={goalTitle}
-                        onChange={(e) =>
-                            setGoalTitle(e.target.value)
-                        }
-                        className="border p-2"
-                    />
+                {/* Header */}
+                <div className="mb-10">
+                    <div className="flex justify-between items-start">
 
-                    <button
-                        onClick={handleCreateGoal}
-                        className="bg-green-500 text-white px-4"
-                    >
-                        Add Goal
-                    </button>
-                </div>
-                Members
-            </h2>
-            <div className="flex gap-2 mb-4">
-                <input
-                    type="email"
-                    placeholder="Friend Email"
-                    value={memberEmail}
-                    onChange={(e) =>
-                        setMemberEmail(
-                            e.target.value
-                        )
-                    }
-                    className="border p-2"
-                />
+                        <div>
+                            <div className="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                                Commitly Group
+                            </div>
 
-                <button
-                    onClick={handleAddMember}
-                    className="bg-blue-500 text-white px-4"
-                >
-                    Add Member
-                </button>
-            </div>
+                            <h1 className="text-5xl font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
+                                {groupData.group.name}
+                            </h1>
 
-            {groupData.members.map((member) => (
-                <p key={member.id}>
-                    {member.name}
-                </p>
-            ))}
-
-            <h2 className="text-xl mt-6 mb-2">
-                Goals
-            </h2>
-
-            {groupData.goals.map((goal) => (
-                <div
-                    key={goal.id}
-                    className="border p-3 mb-2 rounded"
-                >
-                    <p>
-                        {goal.user_name} - {goal.title}
-                    </p>
-
-                    <p>Status: {goal.status}</p>
-
-                    {goal.proof_url && (
-                        <div className="mt-2">
-                            <a
-                                href={`http://localhost:5000${goal.proof_url}`}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                <img
-                                    src={`http://localhost:5000${goal.proof_url}`}
-                                    alt="Proof"
-                                    className="w-40 border rounded cursor-pointer"
-                                />
-                            </a>
+                            <p className="text-slate-500 mt-3 text-lg">
+                                Track goals, verify progress and stay accountable together.
+                            </p>
                         </div>
-                    )}
 
-                    {goal.user_id === currentUserId &&
-                        goal.status === "COMPLETED" && (
-                            <div className="mt-2">
+                        {isOwner && (
+                            <button
+                                onClick={handleDeleteGroup}
+                                title="Delete Group"
+                                className="px-3 py-2 rounded-xl bg-rose-100 text-rose-700 text-sm font-medium hover:bg-rose-200 hover:text-rose-800 transition"
+                            >
+                                Delete
+                            </button>
+                        )}
+
+                    </div>
+                </div>
+
+                {/* Top Actions */}
+                <div className="grid lg:grid-cols-2 gap-6 mb-10">
+
+                    {/* Create Goal */}
+                    <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-md border border-rose-100 hover:shadow-xl transition-all duration-300">
+                        <h2 className="text-xl font-semibold text-slate-900 mb-1">
+                            Create Goal
+                        </h2>
+
+                        <p className="text-slate-500 text-sm mb-5">
+                            Add a new goal and track your progress.
+                        </p>
+
+                        <div className="flex gap-3">
+                            <input
+                                type="text"
+                                placeholder="Enter your goal..."
+                                value={goalTitle}
+                                onChange={(e) =>
+                                    setGoalTitle(e.target.value)
+                                }
+                                className="flex-1 px-4 py-3 border border-rose-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                            />
+
+                            <button
+                                onClick={handleCreateGoal}
+                                className="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-600 via-pink-600 to-fuchsia-600 text-white font-medium hover:shadow-lg hover:scale-[1.02] transition-all"
+                            >
+                                Add Goal
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Invite Member */}
+                    {isOwner && (
+                        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-md border border-rose-100 hover:shadow-xl transition-all duration-300">
+                            <h2 className="text-xl font-semibold text-slate-900 mb-1">
+                                Invite Member
+                            </h2>
+
+                            <p className="text-slate-500 text-sm mb-5">
+                                Add friends and build accountability.
+                            </p>
+
+                            <div className="flex gap-3">
                                 <input
-                                    type="file"
+                                    type="email"
+                                    placeholder="Friend email..."
+                                    value={memberEmail}
                                     onChange={(e) =>
-                                        setSelectedFile(
-                                            e.target.files[0]
-                                        )
+                                        setMemberEmail(e.target.value)
                                     }
+                                    className="flex-1 px-4 py-3 border border-rose-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                                 />
 
                                 <button
-                                    onClick={() =>
-                                        handleUploadProof(goal.id)
-                                    }
-                                    className="bg-purple-500 text-white px-3 py-1 ml-2"
+                                    onClick={handleAddMember}
+                                    className="px-6 py-3 rounded-xl bg-slate-900 text-white hover:bg-slate-800 transition"
                                 >
-                                    Upload Proof
+                                    Invite
                                 </button>
                             </div>
-                        )}
-
-
-                    {goal.verified_by ? (
-                        <p className="text-green-600 font-bold">
-                            ✅ Verified
-                        </p>
-                    ) : (
-                        goal.user_id !== currentUserId &&
-                        goal.status === "COMPLETED" &&
-                        goal.proof_url && (
-                            <button
-                                onClick={() =>
-                                    handleVerifyGoal(goal.id)
-                                }
-                                className="bg-blue-500 text-white px-3 py-1 mt-2"
-                            >
-                                Verify
-                            </button>
-                        )
-                    )}
-
-                    {goal.user_id === currentUserId && (
-                        <div className="flex gap-2 mt-2">
-                            <button
-                                onClick={() =>
-                                    handleStatusUpdate(
-                                        goal.id,
-                                        "COMPLETED"
-                                    )
-                                }
-                                className="bg-green-500 text-white px-3 py-1"
-                            >
-                                Complete
-                            </button>
-
-                            <button
-                                onClick={() =>
-                                    handleStatusUpdate(
-                                        goal.id,
-                                        "MISSED"
-                                    )
-                                }
-                                className="bg-red-500 text-white px-3 py-1"
-                            >
-                                Missed
-                            </button>
                         </div>
                     )}
                 </div>
-            ))}
+
+                {/* Members */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-md border border-rose-100 mb-10">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-bold text-slate-900">
+                            Members
+                        </h2>
+
+                        <span className="bg-rose-50 text-rose-700 px-3 py-1 rounded-full text-sm font-medium">
+                            {groupData.members.length} members
+                        </span>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {groupData.members.map((member) => (
+                            <div
+                                key={member.id}
+                                className="border border-rose-100 rounded-2xl p-4 flex items-center gap-4 hover:border-rose-300 hover:shadow-md transition-all"
+                            >
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-rose-600 to-fuchsia-700 flex items-center justify-center text-white font-bold text-lg">
+                                    {member.name?.charAt(0)?.toUpperCase()}
+                                </div>
+
+                                <div className="flex-1">
+                                    <p className="font-semibold text-slate-900">
+                                        {member.name}
+                                    </p>
+
+                                    <p className="text-sm text-slate-500">
+                                        {member.role === "owner"
+                                            ? "👑 Owner"
+                                            : "Group Member"}
+                                    </p>
+                                </div>
+                                {isOwner &&
+                                    member.role !== "owner" && (
+
+                                        <button
+                                            onClick={() =>
+                                                handleRemoveMember(
+                                                    member.id
+                                                )
+                                            }
+                                            className="px-3 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition"
+                                        >
+                                            Remove
+                                        </button>
+                                    )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Goals Header */}
+                <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 className="text-3xl font-bold text-slate-900">
+                            Goals
+                        </h2>
+
+                        <p className="text-slate-500 mt-1">
+                            Manage and verify completed goals
+                        </p>
+                    </div>
+
+                    <span className="bg-white border border-rose-100 px-4 py-2 rounded-xl text-slate-600 text-sm shadow-sm">
+                        {groupData.goals.length} total goals
+                    </span>
+                </div>
+
+                {/* Goals List */}
+                <div className="space-y-5">
+                    {groupData.goals.map((goal) => (
+                        <div
+                            key={goal.id}
+                            className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-md border border-rose-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                        >
+                            <div className="flex flex-col lg:flex-row lg:justify-between gap-4">
+
+                                <div className="flex gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-rose-600 to-fuchsia-700 flex items-center justify-center text-white font-bold shrink-0">
+                                        {goal.user_name
+                                            ?.charAt(0)
+                                            ?.toUpperCase()}
+                                    </div>
+
+                                    <div>
+                                        <h3 className="text-xl font-semibold text-slate-900">
+                                            {goal.title}
+                                        </h3>
+
+                                        <p className="text-slate-500">
+                                            Created by {goal.user_name}
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3">
+
+                                    {goal.user_id === currentUserId && (
+                                        <button
+                                            onClick={() => handleDeleteGoal(goal.id)}
+                                            className="px-3 py-2 rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200 transition"
+                                        >
+                                            Delete
+                                        </button>
+                                    )}
+
+                                    <span
+                                        className={`px-4 py-2 rounded-full text-sm font-semibold ${goal.status === "COMPLETED"
+                                            ? "bg-emerald-100 text-emerald-700"
+                                            : goal.status === "MISSED"
+                                                ? "bg-rose-100 text-rose-700"
+                                                : "bg-amber-100 text-amber-700"
+                                            }`}
+                                    >
+                                        {goal.status}
+                                    </span>
+
+                                </div>
+                            </div>
+
+                            {goal.proof_url && (
+                                <div className="mt-6">
+                                    <a
+                                        href={`http://localhost:5000${goal.proof_url}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        <img
+                                            src={`http://localhost:5000${goal.proof_url}`}
+                                            alt="Proof"
+                                            className="w-56 rounded-2xl border border-rose-100 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all"
+                                        />
+                                    </a>
+                                </div>
+                            )}
+
+                            {goal.user_id === currentUserId &&
+                                goal.status === "COMPLETED" && (
+                                    <div className="mt-6 flex flex-wrap gap-3 items-center">
+                                        <input
+                                            type="file"
+                                            onChange={(e) =>
+                                                setSelectedFile(
+                                                    e.target.files[0]
+                                                )
+                                            }
+                                            className="border border-rose-200 rounded-xl p-2 file:mr-3 file:border-0 file:bg-rose-100 file:text-rose-700 file:px-3 file:py-1 file:rounded-lg"
+                                        />
+
+                                        <button
+                                            onClick={() =>
+                                                handleUploadProof(goal.id)
+                                            }
+                                            className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-5 py-2 rounded-xl hover:shadow-lg transition"
+                                        >
+                                            Upload Proof
+                                        </button>
+                                    </div>
+                                )}
+
+                            {goal.verified_by ? (
+                                <div className="mt-5">
+                                    <span className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full font-medium">
+                                        ✓ Verified
+                                    </span>
+                                </div>
+                            ) : (
+                                goal.user_id !== currentUserId &&
+                                goal.status === "COMPLETED" &&
+                                goal.proof_url && (
+                                    <button
+                                        onClick={() =>
+                                            handleVerifyGoal(goal.id)
+                                        }
+                                        className="mt-5 bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white px-5 py-2 rounded-xl hover:shadow-lg transition"
+                                    >
+                                        Verify Goal
+                                    </button>
+                                )
+                            )}
+
+                            {goal.user_id === currentUserId && (
+                                <div className="flex gap-3 mt-6">
+                                    <button
+                                        onClick={() =>
+                                            handleStatusUpdate(
+                                                goal.id,
+                                                "COMPLETED"
+                                            )
+                                        }
+                                        className="px-5 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition"
+                                    >
+                                        Complete
+                                    </button>
+
+                                    <button
+                                        onClick={() =>
+                                            handleStatusUpdate(
+                                                goal.id,
+                                                "MISSED"
+                                            )
+                                        }
+                                        className="px-5 py-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700 transition"
+                                    >
+                                        Missed
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }

@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const groupRoutes = require("./routes/groupRoutes");
 const goalRoutes = require("./routes/goalRoutes");
 const checkinRoutes = require("./routes/checkinRoutes");
+const invitationRoutes = require("./routes/invitationRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +18,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/goals", goalRoutes);
 app.use("/api/checkins", checkinRoutes);
+app.use(
+  "/api/invitations",
+  invitationRoutes
+);
 
 app.get("/api/health", (req, res) => {
   res.json({

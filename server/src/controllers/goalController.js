@@ -270,6 +270,48 @@ const getMyStats = async (req, res) => {
     }
 };
 
+const deleteGoal = async (req, res) => {
+    try {
+
+        const [goal] = await db.query(
+            "SELECT * FROM goals WHERE id = ?",
+            [req.params.goalId]
+        );
+
+        if (goal.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Goal not found",
+            });
+        }
+
+        if (goal[0].user_id !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: "You can delete only your own goals",
+            });
+        }
+
+        await db.query(
+            "DELETE FROM goals WHERE id = ?",
+            [req.params.goalId]
+        );
+
+        res.json({
+            success: true,
+            message: "Goal deleted",
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
+};
+
 module.exports = {
     createGoal,
     getGroupGoals,
@@ -277,4 +319,5 @@ module.exports = {
     verifyGoal,
     getMyStats,
     uploadProof,
+    deleteGoal,
 };
