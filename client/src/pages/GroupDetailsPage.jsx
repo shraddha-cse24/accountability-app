@@ -209,27 +209,28 @@ function GroupDetailsPage() {
                         </div>
                     )}
 
-                    {goal.user_id === currentUserId && (
-                        <div className="mt-2">
-                            <input
-                                type="file"
-                                onChange={(e) =>
-                                    setSelectedFile(
-                                        e.target.files[0]
-                                    )
-                                }
-                            />
+                    {goal.user_id === currentUserId &&
+                        goal.status === "COMPLETED" && (
+                            <div className="mt-2">
+                                <input
+                                    type="file"
+                                    onChange={(e) =>
+                                        setSelectedFile(
+                                            e.target.files[0]
+                                        )
+                                    }
+                                />
 
-                            <button
-                                onClick={() =>
-                                    handleUploadProof(goal.id)
-                                }
-                                className="bg-purple-500 text-white px-3 py-1 ml-2"
-                            >
-                                Upload Proof
-                            </button>
-                        </div>
-                    )}
+                                <button
+                                    onClick={() =>
+                                        handleUploadProof(goal.id)
+                                    }
+                                    className="bg-purple-500 text-white px-3 py-1 ml-2"
+                                >
+                                    Upload Proof
+                                </button>
+                            </div>
+                        )}
 
 
                     {goal.verified_by ? (
@@ -237,41 +238,47 @@ function GroupDetailsPage() {
                             ✅ Verified
                         </p>
                     ) : (
-                        <button
-                            onClick={() =>
-                                handleVerifyGoal(goal.id)
-                            }
-                            className="bg-blue-500 text-white px-3 py-1 mt-2"
-                        >
-                            Verify
-                        </button>
+                        goal.user_id !== currentUserId &&
+                        goal.status === "COMPLETED" &&
+                        goal.proof_url && (
+                            <button
+                                onClick={() =>
+                                    handleVerifyGoal(goal.id)
+                                }
+                                className="bg-blue-500 text-white px-3 py-1 mt-2"
+                            >
+                                Verify
+                            </button>
+                        )
                     )}
 
-                    <div className="flex gap-2 mt-2">
-                        <button
-                            onClick={() =>
-                                handleStatusUpdate(
-                                    goal.id,
-                                    "COMPLETED"
-                                )
-                            }
-                            className="bg-green-500 text-white px-3 py-1"
-                        >
-                            Complete
-                        </button>
+                    {goal.user_id === currentUserId && (
+                        <div className="flex gap-2 mt-2">
+                            <button
+                                onClick={() =>
+                                    handleStatusUpdate(
+                                        goal.id,
+                                        "COMPLETED"
+                                    )
+                                }
+                                className="bg-green-500 text-white px-3 py-1"
+                            >
+                                Complete
+                            </button>
 
-                        <button
-                            onClick={() =>
-                                handleStatusUpdate(
-                                    goal.id,
-                                    "MISSED"
-                                )
-                            }
-                            className="bg-red-500 text-white px-3 py-1"
-                        >
-                            Missed
-                        </button>
-                    </div>
+                            <button
+                                onClick={() =>
+                                    handleStatusUpdate(
+                                        goal.id,
+                                        "MISSED"
+                                    )
+                                }
+                                className="bg-red-500 text-white px-3 py-1"
+                            >
+                                Missed
+                            </button>
+                        </div>
+                    )}
                 </div>
             ))}
         </div>

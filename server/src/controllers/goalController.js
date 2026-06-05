@@ -77,10 +77,30 @@ const updateGoalStatus = async (req, res) => {
     try {
         const { status } = req.body;
 
+        const [goal] = await db.query(
+            "SELECT * FROM goals WHERE id = ?",
+            [req.params.goalId]
+        );
+
+        if (goal.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Goal not found",
+            });
+        }
+
+        if (goal[0].user_id !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message:
+                    "You can update only your own goals",
+            });
+        }
+
         await db.query(
             `UPDATE goals
-       SET status = ?
-       WHERE id = ?`,
+             SET status = ?
+             WHERE id = ?`,
             [status, req.params.goalId]
         );
 
