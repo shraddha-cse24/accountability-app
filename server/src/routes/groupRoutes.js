@@ -11,6 +11,7 @@ const {
   deleteGroup,
   leaveGroup,
   getGroupHistory,
+  clearGroupHistory,
 } = require("../controllers/groupController");
 
 const router = express.Router();
@@ -31,6 +32,12 @@ router.get(
   "/:groupId/history",
   protect,
   getGroupHistory
+);
+
+router.delete(
+  "/:groupId/history",
+  protect,
+  clearGroupHistory
 );
 
 router.post(

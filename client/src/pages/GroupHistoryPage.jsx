@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getGroupHistory } from "../services/groupDetailsService";
+import { getGroupHistory, clearHistory, } from "../services/groupDetailsService";
 
 function GroupHistoryPage() {
 
@@ -37,6 +37,28 @@ function GroupHistoryPage() {
             setLoading(false);
         }
     };
+
+    const handleClearHistory =
+        async () => {
+
+            const confirmDelete =
+                window.confirm(
+                    "Delete all historical goals?"
+                );
+
+            if (!confirmDelete) return;
+
+            try {
+
+                await clearHistory(groupId);
+
+                await fetchHistory();
+
+            } catch (error) {
+
+                console.error(error);
+            }
+        };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-white">
@@ -109,6 +131,17 @@ function GroupHistoryPage() {
                         </select>
 
                     </div>
+
+                </div>
+
+                <div className="flex justify-end mb-6">
+
+                    <button
+                        onClick={handleClearHistory}
+                        className="px-4 py-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700 transition "
+                    >
+                        🗑 Clear History
+                    </button>
 
                 </div>
 

@@ -498,6 +498,56 @@ const getGroupHistory = async (req, res) => {
     }
 };
 
+const clearGroupHistory = async (req, res) => {
+    try {
+
+        const groupId = req.params.groupId;
+
+        const [ownerCheck] = await db.query(
+            `SELECT *
+             FROM group_members
+             WHERE group_id = ?
+             AND user_id = ?
+             AND role = 'owner'`,
+            [groupId, req.user.id]
+        );
+
+        if (ownerCheck.length === 0) {
+            return res.status(403).json({
+                success: false,
+                message:
+                    "Only owner can clear history",
+            });
+        }
+
+        await db.query(
+            `DELETE FROM goals
+             WHERE group_id = ?
+             AND status IN (
+                'VERIFIED',
+                'COMPLETED',
+                'MISSED'
+             )`,
+            [groupId]
+        );
+
+        res.json({
+            success: true,
+            message:
+                "History cleared successfully",
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
+};
+
 module.exports = {
     createGroup,
     addMember,
@@ -507,4 +557,5 @@ module.exports = {
     deleteGroup,
     leaveGroup,
     getGroupHistory,
+    clearGroupHistory,
 };

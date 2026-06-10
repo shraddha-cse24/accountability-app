@@ -50,3 +50,15 @@ export const getGroupHistory =
 
     return response.data;
 };
+
+export const clearHistory = async (
+    groupId
+) => {
+
+    const response =
+        await api.delete(
+            `/groups/${groupId}/history`
+        );
+
+    return response.data;
+};
