@@ -18,7 +18,7 @@ export default function LandingPage() {
                     </h1>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
                     <button
                         onClick={() => navigate("/login")}
                         className="px-3 sm:px-5 py-2 rounded-xl border border-rose-200 hover:bg-rose-50 transition"
@@ -28,47 +28,47 @@ export default function LandingPage() {
 
                     <button
                         onClick={() => navigate("/register")}
-                        className="px-3 sm:pax-5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white hover:shadow-lg transition"
+                        className="px-3 sm:px-5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white hover:shadow-lg transition"
                     >
-                        Get Started
+                        Register
                     </button>
                 </div>
             </nav>
 
             {/* Hero */}
-            <section className="max-w-7xl mx-auto px-6 pt-20 pb-24">
+            <section className="max-w-7xl mx-auto px-6 pt-12 sm:pt-20 sm:pb-24">
 
                 <div className="text-center max-w-4xl mx-auto">
 
-                    <div className="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full text-sm font-medium mb-8">
+                    <div className="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
                         Accountability Platform
                     </div>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-slate-900">
+                    <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight text-slate-900">
                         Turn Goals Into
                         <span className="block bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
                             Commitments
                         </span>
                     </h1>
 
-                    <p className="text-xl text-slate-600 mt-8 leading-relaxed">
+                    <p className="text-base sm:text-xl text-slate-600 mt-6 leading-relaxed">
                         Create goals, upload proof of completion,
                         and let friends verify your progress.
                         Stay accountable and achieve more together.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
+                    <div className="flex flex-col sm:flex-row justify-center gap-3 mt-8">
 
                         <button
                             onClick={() => navigate("/register")}
-                            className="px-8 py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white font-semibold text-lg hover:shadow-xl hover:scale-[1.02] transition"
+                            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white font-semibold text-lg hover:shadow-xl hover:scale-[1.02] transition"
                         >
                             Get Started Free
                         </button>
 
                         <button
                             onClick={() => navigate("/login")}
-                            className="px-8 py-4 rounded-2xl border border-rose-200 bg-white hover:bg-rose-50 transition"
+                            className="px-6 py-3 rounded-2xl border border-rose-200 bg-white hover:bg-rose-50 transition"
                         >
                             Sign In
                         </button>
@@ -93,12 +93,12 @@ export default function LandingPage() {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-                    <div className="bg-white rounded-3xl p-8 shadow-md border border-rose-100">
-                        <div className="text-5xl mb-5">
+                    <div className="bg-white rounded-3xl p-6 shadow-md border border-rose-100">
+                        <div className="text-4xl mb-4">
                             🎯
                         </div>
 
-                        <h3 className="text-2xl font-semibold mb-3">
+                        <h3 className="text-xl font-semibold mb-2">
                             Set Goals
                         </h3>
 
@@ -107,12 +107,12 @@ export default function LandingPage() {
                         </p>
                     </div>
 
-                    <div className="bg-white rounded-3xl p-8 shadow-md border border-rose-100">
-                        <div className="text-5xl mb-5">
+                    <div className="bg-white rounded-3xl p-6 shadow-md border border-rose-100">
+                        <div className="text-4xl mb-4">
                             📸
                         </div>
 
-                        <h3 className="text-2xl font-semibold mb-3">
+                        <h3 className="text-xl font-semibold mb-2">
                             Upload Proof
                         </h3>
 
@@ -121,12 +121,12 @@ export default function LandingPage() {
                         </p>
                     </div>
 
-                    <div className="bg-white rounded-3xl p-8 shadow-md border border-rose-100">
-                        <div className="text-5xl mb-5">
+                    <div className="bg-white rounded-3xl p-6 shadow-md border border-rose-100">
+                        <div className="text-4xl mb-4">
                             🤝
                         </div>
 
-                        <h3 className="text-2xl font-semibold mb-3">
+                        <h3 className="text-xl font-semibold mb-2">
                             Get Verified
                         </h3>
 
@@ -134,12 +134,12 @@ export default function LandingPage() {
                             Friends verify your achievements and keep you accountable.
                         </p>
                     </div>
-                    <div className="bg-white rounded-3xl p-8 shadow-md border border-orange-100">
-                        <div className="text-5xl mb-5">
+                    <div className="bg-white rounded-3xl p-6 shadow-md border border-orange-100">
+                        <div className="text-4xl mb-4">
                             🔥
                         </div>
 
-                        <h3 className="text-2xl font-semibold mb-3">
+                        <h3 className="text-xl font-semibold mb-2">
                             Build Streaks
                         </h3>
 

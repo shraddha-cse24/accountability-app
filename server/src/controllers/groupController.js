@@ -523,11 +523,7 @@ const clearGroupHistory = async (req, res) => {
         await db.query(
             `DELETE FROM goals
              WHERE group_id = ?
-             AND status IN (
-                'VERIFIED',
-                'COMPLETED',
-                'MISSED'
-             )`,
+             AND goal_date < CURDATE()`,
             [groupId]
         );
 

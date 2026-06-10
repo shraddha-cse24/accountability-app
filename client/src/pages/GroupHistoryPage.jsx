@@ -118,12 +118,12 @@ function GroupHistoryPage() {
 
                     </select>
 
-                    <button
+                    {/* <button
                         onClick={handleClearHistory}
                         className="text-slate-500 hover:text-rose-600 text-xl transition"
                     >
                         🗑
-                    </button>
+                    </button> */}
 
                 </div>
 
