@@ -120,7 +120,7 @@ function GroupHistoryPage() {
 
                     <button
                         onClick={handleClearHistory}
-                        className="px-4 py-3 rounded-xl bg-rose-600 text-white hover:bg-rose-700 transition"
+                        className="text-slate-500 hover:text-rose-600 text-xl transition"
                     >
                         🗑
                     </button>

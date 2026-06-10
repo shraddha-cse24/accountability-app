@@ -396,16 +396,16 @@ function GroupDetailsPage() {
                         </div>
 
                         <div>
-                            <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-center justify-between mb-4">
 
-                                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.35] bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.2] bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
                                     {groupData.group.name}
                                 </h1>
 
                                 {isOwner && (
                                     <button
                                         onClick={handleDeleteGroup}
-                                        className="text-red-500 hover:text-red-600 text-xl"
+                                        className="text-red-500 hover:text-red-600 text-2xl shrink-0"
                                     >
                                         🗑
                                     </button>
