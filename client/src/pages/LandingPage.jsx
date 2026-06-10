@@ -18,17 +18,17 @@ export default function LandingPage() {
                     </h1>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                     <button
                         onClick={() => navigate("/login")}
-                        className="px-5 py-2 rounded-xl border border-rose-200 hover:bg-rose-50 transition"
+                        className="px-3 sm:px-5 py-2 rounded-xl border border-rose-200 hover:bg-rose-50 transition"
                     >
                         Sign In
                     </button>
 
                     <button
                         onClick={() => navigate("/register")}
-                        className="px-5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white hover:shadow-lg transition"
+                        className="px-3 sm:pax-5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white hover:shadow-lg transition"
                     >
                         Get Started
                     </button>
@@ -44,7 +44,7 @@ export default function LandingPage() {
                         Accountability Platform
                     </div>
 
-                    <h1 className="text-6xl font-bold leading-tight text-slate-900">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight text-slate-900">
                         Turn Goals Into
                         <span className="block bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
                             Commitments

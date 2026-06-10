@@ -1,5 +1,6 @@
 const db = require("../config/db");
-
+const cloudinary =
+    require("../config/cloudinary");
 const createGoal = async (req, res) => {
     try {
         const { title } = req.body;
@@ -257,7 +258,6 @@ const uploadProof = async (req, res) => {
             });
         }
 
-
         if (goal[0].user_id !== req.user.id) {
             return res.status(403).json({
                 success: false,
@@ -297,8 +297,19 @@ const uploadProof = async (req, res) => {
             });
         }
 
+        const base64 =
+            `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+
+        const uploadedImage =
+            await cloudinary.uploader.upload(
+                base64,
+                {
+                    folder: "commitly-proofs",
+                }
+            );
+
         const proofUrl =
-            `/uploads/${req.file.filename}`;
+            uploadedImage.secure_url;
 
         await db.query(
             `UPDATE goals
@@ -316,6 +327,7 @@ const uploadProof = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(error);
 
         res.status(500).json({
@@ -366,6 +378,7 @@ const getMyStats = async (req, res) => {
         });
 
     } catch (error) {
+
         console.error(error);
 
         res.status(500).json({

@@ -28,9 +28,6 @@ function GroupDetailsPage() {
                 member.id === currentUserId
         );
 
-    const SERVER_URL =
-        import.meta.env
-            .VITE_SERVER_URL;
 
     const isOwner =
         currentMember?.role === "owner";
@@ -408,7 +405,7 @@ function GroupDetailsPage() {
                         </div>
 
                         <div>
-                            <h1 className="text-5xl md:text-6xl font-bold leading-[1.35] bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.35] bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
                                 {groupData.group.name}
                             </h1>
 
@@ -517,7 +514,7 @@ function GroupDetailsPage() {
                                     <p className="text-sm text-slate-500">
                                         {member.role === "owner"
                                             ? "👑 Owner"
-                                            : "Group Member"}
+                                            : "Member"}
                                     </p>
                                 </div>
                                 {isOwner &&
@@ -623,21 +620,6 @@ function GroupDetailsPage() {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
-
-                        <button
-                            onClick={() =>
-                                navigate(
-                                    `/group/${groupId}/history`
-                                )
-                            }
-                            className="px-4 py-2 rounded-xl bg-white border border-rose-200 hover:bg-rose-50 transition"
-                        >
-                            📜 History
-                        </button>
-
-                    </div>
-
                 </div>
 
                 {/* Goals List */}
@@ -711,12 +693,12 @@ function GroupDetailsPage() {
                             {goal.proof_url ? (
                                 <div className="mt-4">
                                     <a
-                                        href={`${SERVER_URL}${goal.proof_url}`}
+                                        href={goal.proof_url}
                                         target="_blank"
                                         rel="noreferrer"
                                     >
                                         <img
-                                            src={`${SERVER_URL}${goal.proof_url}`}
+                                            src={goal.proof_url}
                                             alt="Proof"
                                             className="w-full max-w-xs rounded-2xl border border-rose-100 shadow-sm"
                                             onError={(e) => {
@@ -736,29 +718,28 @@ function GroupDetailsPage() {
                             {goal.user_id === currentUserId &&
                                 goal.status === "COMPLETED" &&
                                 !goal.verified_by && (
-                                    <div className="mt-6 flex flex-wrap gap-3 items-center">
+                                    <div className="mt-6 flex flex-col gap-3">
+
                                         <input
                                             type="file"
                                             onChange={(e) =>
-                                                setSelectedFiles(
-                                                    (prev) => ({
-                                                        ...prev,
-                                                        [goal.id]:
-                                                            e.target.files[0],
-                                                    })
-                                                )
+                                                setSelectedFiles((prev) => ({
+                                                    ...prev,
+                                                    [goal.id]: e.target.files[0],
+                                                }))
                                             }
-                                            className="border border-rose-200 rounded-xl p-2 file:mr-3 file:border-0 file:bg-rose-100 file:text-rose-700 file:px-3 file:py-1 file:rounded-lg"
+                                            className=" w-full text-sm border border-rose-200  rounded-xl  p-2 file:mr-3 file:border-0 file:bg-rose-100 file:text-rose-700 file:px-3 file:py-1 file:rounded-lg "
                                         />
 
                                         <button
                                             onClick={() =>
                                                 handleUploadProof(goal.id)
                                             }
-                                            className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-5 py-2 rounded-xl hover:shadow-lg transition"
+                                            className="w-fit bg-gradient-to-r from-violet-600 to-indigo-600 text-white  px-5 py-2  rounded-xl hover:shadow-lg transition "
                                         >
                                             Upload Proof
                                         </button>
+
                                     </div>
                                 )}
 
@@ -795,6 +776,19 @@ function GroupDetailsPage() {
                                 )}
                         </div>
                     ))}
+
+                </div>
+
+                <div className="flex justify-center mt-8 mb-8">
+
+                    <button
+                        onClick={() =>
+                            navigate(`/group/${groupId}/history`)
+                        }
+                        className="px-6 py-3 rounded-2xl bg-white border border-rose-200 hover:bg-rose-50 transition"
+                    >
+                        📜 View History
+                    </button>
 
                 </div>
             </div>

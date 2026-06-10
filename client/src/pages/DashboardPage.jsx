@@ -279,7 +279,7 @@ function DashboardPage() {
                 Dashboard
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl leading-[1.3] font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl leading-[1.3] font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
                 Hi, {profile?.user?.name?.split(" ")[0]}!
               </h1>
 
@@ -388,7 +388,7 @@ function DashboardPage() {
                 {activePopup ===
                   "notifications" && (
 
-                    <div className="absolute right-0 top-14 w-80 max-w-[90vw] bg-white rounded-3xl shadow-2xl border border-rose-100 overflow-hidden z-50">
+                    <div className="absolute right-0 top-12 w-72 sm:w-80 max-w-[85vw] bg-white rounded-3xl shadow-2xl border border-rose-100 overflow-hidden z-50">
 
                       {/* Header */}
                       <div className="px-5 py-4 border-b border-rose-100 bg-gradient-to-r from-rose-50/70 to-pink-50/40">
@@ -569,22 +569,22 @@ function DashboardPage() {
 
               <div>
 
-                <h2 className="text-2xl font-bold text-slate-900">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
                   🎯 Today's Progress
                 </h2>
 
-                <p className="text-slate-500 mt-1">
+                <p className="text-sm text-slate-500 mt-1">
                   Track today's accountability goals
                 </p>
 
               </div>
 
-              <div className="px-4 py-2 rounded-2xl bg-rose-50 border border-rose-100">
+              <div className="px-3 py-2 rounded-xl bg-rose-50 border border-rose-100">
                 <p className="text-xs text-slate-500">
                   Completion
                 </p>
 
-                <p className="text-3xl font-bold text-rose-600">
+                <p className="text-2xl font-bold text-rose-600">
                   {todayProgress.total === 0
                     ? 0
                     : Math.round(
@@ -599,32 +599,32 @@ function DashboardPage() {
 
             <div className="grid grid-cols-3 gap-3 mb-6">
 
-              <div className="bg-slate-100 rounded-2xl p-4">
-                <p className="text-xs text-slate-600">
+              <div className="bg-slate-100 rounded-xl p-3">
+                <p className="text-[11px] text-slate-500">
                   Goals
                 </p>
 
-                <h3 className="text-3xl font-bold">
+                <h3 className="text-2xl font-bold">
                   {todayProgress.total}
                 </h3>
               </div>
 
-              <div className="bg-emerald-50 rounded-2xl p-4">
-                <p className="text-xs text-emerald-600">
-                  Completed
+              <div className="bg-emerald-50 rounded-xl p-3">
+                <p className="text-[11px] text-emerald-500">
+                  Done
                 </p>
 
-                <h3 className="text-3xl font-bold text-emerald-600">
+                <h3 className="text-2xl font-bold text-emerald-600">
                   {todayProgress.completed}
                 </h3>
               </div>
 
-              <div className="bg-orange-50 rounded-2xl p-4">
-                <p className="text-xs text-orange-500">
-                  Remaining
+              <div className="bg-orange-50 rounded-xl p-3">
+                <p className="text-[11px] text-orange-500">
+                  Left
                 </p>
 
-                <h3 className="text-3xl font-bold text-orange-500">
+                <h3 className="text-2xl font-bold text-orange-500">
                   {todayProgress.remaining}
                 </h3>
               </div>

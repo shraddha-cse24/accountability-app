@@ -10,9 +10,6 @@ function GroupHistoryPage() {
     const [history, setHistory] = useState([]);
     const [filter, setFilter] = useState("7");
     const [loading, setLoading] = useState(true);
-    const SERVER_URL =
-        import.meta.env
-            .VITE_SERVER_URL;
 
     useEffect(() => {
         fetchHistory();
@@ -47,28 +44,23 @@ function GroupHistoryPage() {
             <div className="max-w-6xl mx-auto px-6 py-10">
 
                 {/* Header */}
-                <div className="flex justify-between items-start mb-10">
-
-                    <div>
-
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
-                            History
-                        </h1>
-
-                        <p className="text-slate-500 mt-3 text-lg">
-                            Review previous goals and progress.
-                        </p>
-
-                    </div>
+                <div className="mb-10">
 
                     <button
                         onClick={() =>
                             navigate(`/group/${groupId}`)
                         }
-                        className="px-3 py-2 rounded-xl bg-white border border-rose-200 hover:bg-rose-50 transition text-sm"
-                    >
+                        className="inline-flex items-center gap-2 text-slate-600 hover:text-rose-600 transition mb-5"                    >
                         ← Back
                     </button>
+
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
+                        History
+                    </h1>
+
+                    <p className="text-slate-500 mt-3 text-lg">
+                        Review previous goals and progress.
+                    </p>
 
                 </div>
 
@@ -200,12 +192,12 @@ function GroupHistoryPage() {
                                     {goal.proof_url ? (
 
                                         <a
-                                            href={`${SERVER_URL}${goal.proof_url}`}
+                                            href={goal.proof_url}
                                             target="_blank"
                                             rel="noreferrer"
                                         >
                                             <img
-                                                src={`${SERVER_URL}${goal.proof_url}`}
+                                                src={goal.proof_url}
                                                 alt="Proof"
                                                 className="w-56 rounded-2xl border border-rose-100 hover:shadow-lg hover:scale-[1.02] transition"
                                             />
