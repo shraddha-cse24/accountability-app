@@ -4,6 +4,30 @@ const sendInvitation = async (req, res) => {
     try {
 
         const { email } = req.body;
+        if (!email?.trim()) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Email is required",
+            });
+        }
+
+        const emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (
+            !emailRegex.test(
+                email.trim()
+            )
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Invalid email address",
+            });
+        }
+        const normalizedEmail =
+            email.trim().toLowerCase();
         const groupId = req.params.groupId;
 
         const [ownerCheck] = await db.query(
@@ -24,7 +48,7 @@ const sendInvitation = async (req, res) => {
 
         const [users] = await db.query(
             "SELECT * FROM users WHERE email = ?",
-            [email]
+            [normalizedEmail]
         );
 
         if (users.length === 0) {
@@ -153,10 +177,40 @@ const acceptInvitation = async (req, res) => {
 
         const invite = invitation[0];
 
+        if (invite.status !== "PENDING") {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Invitation already processed",
+            });
+        }
+
         if (invite.receiver_id !== req.user.id) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized",
+            });
+        }
+
+        const [existingMember] =
+            await db.query(
+                `
+        SELECT *
+        FROM group_members
+        WHERE group_id = ?
+        AND user_id = ?
+        `,
+                [
+                    invite.group_id,
+                    req.user.id
+                ]
+            );
+
+        if (existingMember.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Already a member",
             });
         }
 

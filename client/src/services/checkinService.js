@@ -1,21 +1,13 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/checkins";
+import api from "./api";
 
 export const createCheckin = async (
   goalId,
   checkinData
 ) => {
-  const token = localStorage.getItem("token");
 
-  const response = await axios.post(
-    `${API_URL}/${goalId}`,
-    checkinData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+  const response = await api.post(
+    `/checkins/${goalId}`,
+    checkinData
   );
 
   return response.data;

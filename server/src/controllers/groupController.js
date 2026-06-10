@@ -4,10 +4,24 @@ const createGroup = async (req, res) => {
     try {
         const { name, description } = req.body;
 
+        if (!name?.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Group name is required",
+            });
+        }
+
+        if (name.trim().length > 100) {
+            return res.status(400).json({
+                success: false,
+                message: "Group name too long",
+            });
+        }
+
         const [result] = await db.query(
             `INSERT INTO groups (name, description, created_by)
    VALUES (?, ?, ?)`,
-            [name, description, req.user.id]
+            [name.trim(), description?.trim() || null, req.user.id]
         );
         await db.query(
             `INSERT INTO group_members
@@ -106,11 +120,22 @@ const getMyGroups = async (req, res) => {
     try {
 
         const [groups] = await db.query(
-            `SELECT groups.*
-       FROM groups
-       JOIN group_members
-       ON groups.id = group_members.group_id
-       WHERE group_members.user_id = ?`,
+            `
+  SELECT
+    groups.*,
+    COUNT(DISTINCT group_members_all.user_id) AS memberCount
+  FROM groups
+
+  JOIN group_members
+    ON groups.id = group_members.group_id
+
+  LEFT JOIN group_members AS group_members_all
+    ON groups.id = group_members_all.group_id
+
+  WHERE group_members.user_id = ?
+
+  GROUP BY groups.id
+  `,
             [req.user.id]
         );
 
@@ -131,12 +156,53 @@ const getMyGroups = async (req, res) => {
 
 const getGroupDetails = async (req, res) => {
     try {
+        await db.query(`
+DELETE FROM notifications
+WHERE is_read = TRUE
+AND created_at < NOW() - INTERVAL 1 DAY
+`);
+
+        await db.query(`
+UPDATE goals
+SET status = 'MISSED'
+WHERE status = 'PENDING'
+AND goal_date < CURDATE()
+`);
         const groupId = req.params.groupId;
+
+        const [membership] =
+            await db.query(
+                `
+        SELECT role
+        FROM group_members
+        WHERE group_id = ?
+        AND user_id = ?
+        `,
+                [
+                    groupId,
+                    req.user.id
+                ]
+            );
+
+        if (!membership[0]) {
+            return res.status(403).json({
+                success: false,
+                message:
+                    "Access denied",
+            });
+        }
 
         const [group] = await db.query(
             "SELECT * FROM groups WHERE id = ?",
             [groupId]
         );
+
+        if (group.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Group not found",
+            });
+        }
 
         const [members] = await db.query(
             `SELECT
@@ -151,12 +217,31 @@ const getGroupDetails = async (req, res) => {
             [groupId]
         );
 
+        const [leaderboard] = await db.query(
+            `SELECT
+      users.id,
+      users.name,
+      COUNT(goals.id) AS verified_count
+   FROM group_members
+   JOIN users
+      ON users.id = group_members.user_id
+   LEFT JOIN goals
+      ON goals.user_id = users.id
+      AND goals.group_id = group_members.group_id
+      AND goals.verified_by IS NOT NULL
+   WHERE group_members.group_id = ?
+   GROUP BY users.id, users.name
+   ORDER BY verified_count DESC`,
+            [groupId]
+        );
+
         const [goals] = await db.query(
             `SELECT goals.*, users.name as user_name
-       FROM goals
-       JOIN users
-       ON users.id = goals.user_id
-       WHERE goals.group_id = ?`,
+   FROM goals
+   JOIN users
+   ON users.id = goals.user_id
+   WHERE goals.group_id = ?
+   ORDER BY goal_date DESC`,
             [groupId]
         );
 
@@ -165,6 +250,7 @@ const getGroupDetails = async (req, res) => {
             group: group[0],
             members,
             goals,
+            leaderboard,
         });
 
     } catch (error) {
@@ -320,6 +406,98 @@ const leaveGroup = async (req, res) => {
     }
 };
 
+const getGroupHistory = async (req, res) => {
+    try {
+
+        const groupId = req.params.groupId;
+
+        const [membership] =
+            await db.query(
+                `
+        SELECT role
+        FROM group_members
+        WHERE group_id = ?
+        AND user_id = ?
+        `,
+                [
+                    groupId,
+                    req.user.id
+                ]
+            );
+
+        if (!membership[0]) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied",
+            });
+        }
+
+        const days = req.query.days;
+
+        if (
+            days &&
+            days !== "all" &&
+            (
+                isNaN(Number(days)) ||
+                Number(days) < 1
+            )
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Invalid days value",
+            });
+        }
+
+        let query = `
+            SELECT goals.*, users.name as user_name
+            FROM goals
+            JOIN users
+            ON users.id = goals.user_id
+            WHERE goals.group_id = ?
+            AND goal_date < CURDATE()
+        `;
+
+        if (days && days !== "all") {
+            query += `
+                AND goal_date >= DATE_SUB(
+                    CURDATE(),
+                    INTERVAL ? DAY
+                )
+            `;
+        }
+
+        query += `
+            ORDER BY goal_date DESC
+        `;
+
+        const [history] =
+            days && days !== "all"
+                ? await db.query(
+                    query,
+                    [groupId, Number(days)]
+                )
+                : await db.query(
+                    query,
+                    [groupId]
+                );
+
+        res.json({
+            success: true,
+            history,
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+    }
+};
+
 module.exports = {
     createGroup,
     addMember,
@@ -328,4 +506,5 @@ module.exports = {
     removeMember,
     deleteGroup,
     leaveGroup,
+    getGroupHistory,
 };

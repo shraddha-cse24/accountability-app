@@ -20,6 +20,28 @@ function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (
+      !formData.email.trim() ||
+      !formData.password
+    ) {
+      return alert(
+        "Email and password are required"
+      );
+    }
+
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (
+      !emailRegex.test(
+        formData.email.trim()
+      )
+    ) {
+      return alert(
+        "Enter a valid email"
+      );
+    }
+
     try {
       const data = await loginUser(formData);
 

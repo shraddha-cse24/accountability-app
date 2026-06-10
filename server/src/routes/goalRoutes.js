@@ -4,7 +4,7 @@ const protect = require("../middleware/authMiddleware");
 
 const upload = require("../middleware/uploadMiddleware");
 
-const { createGoal,getGroupGoals, updateGoalStatus, verifyGoal, getMyStats, getMyStreak, uploadProof, deleteGoal,} = require("../controllers/goalController");
+const { createGoal,getGroupGoals, updateGoalStatus, verifyGoal, getMyStats, getMyStreak, uploadProof, deleteGoal,getTodayProgress,} = require("../controllers/goalController");
 
 const router = express.Router();
 router.get(
@@ -51,5 +51,10 @@ router.post(
   uploadProof
 );
 
+router.get(
+    "/today-progress",
+    protect,
+    getTodayProgress
+);
 
 module.exports = router;

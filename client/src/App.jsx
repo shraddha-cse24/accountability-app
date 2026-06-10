@@ -6,6 +6,10 @@ import DashboardPage from "./pages/DashboardPage";
 import GroupDetailsPage from "./pages/GroupDetailsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
+import ProfilePage
+  from "./pages/ProfilePage";
+import GroupHistoryPage
+  from "./pages/GroupHistoryPage";
 
 function App() {
   return (
@@ -25,13 +29,31 @@ function App() {
       />
 
       <Route
-  path="/group/:groupId"
-  element={
-    <ProtectedRoute>
-      <GroupDetailsPage />
-    </ProtectedRoute>
-  }
-/>
+        path="/group/:groupId/history"
+        element={
+          <ProtectedRoute>
+            <GroupHistoryPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/group/:groupId"
+        element={
+          <ProtectedRoute>
+            <GroupDetailsPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

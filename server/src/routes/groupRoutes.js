@@ -10,6 +10,7 @@ const {
   removeMember,
   deleteGroup,
   leaveGroup,
+  getGroupHistory,
 } = require("../controllers/groupController");
 
 const router = express.Router();
@@ -24,6 +25,12 @@ router.post(
   "/",
   protect,
   createGroup
+);
+
+router.get(
+  "/:groupId/history",
+  protect,
+  getGroupHistory
 );
 
 router.post(

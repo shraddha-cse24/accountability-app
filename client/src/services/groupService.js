@@ -1,33 +1,19 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/groups";
+import api from "./api";
 
 export const getMyGroups = async () => {
-  const token = localStorage.getItem("token");
 
-  const response = await axios.get(
-    `${API_URL}/my-groups`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+  const response = await api.get(
+    `/groups/my-groups`,
   );
 
   return response.data;
 };
 
 export const createGroup = async (groupData) => {
-  const token = localStorage.getItem("token");
 
-  const response = await axios.post(
-    `${API_URL}`,
+  const response = await api.post(
+    `/groups`,
     groupData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
   );
 
   return response.data;
@@ -37,18 +23,9 @@ export const deleteGroup = async (
   groupId
 ) => {
 
-  const token =
-    localStorage.getItem("token");
-
   const response =
-    await axios.delete(
-      `${API_URL}/${groupId}`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${token}`,
-        },
-      }
+    await api.delete(
+      `/groups/${groupId}`,
     );
 
   return response.data;
@@ -58,18 +35,9 @@ export const leaveGroup = async (
   groupId
 ) => {
 
-  const token =
-    localStorage.getItem("token");
-
   const response =
-    await axios.delete(
-      `${API_URL}/${groupId}/leave`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${token}`,
-        },
-      }
+    await api.delete(
+      `/groups/${groupId}/leave`,
     );
 
   return response.data;

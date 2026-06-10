@@ -2,7 +2,22 @@ const db = require("../config/db");
 
 const createGoal = async (req, res) => {
     try {
-        const { title, goal_date } = req.body;
+        const { title } = req.body;
+
+        if (!title || !title.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Goal title is required",
+            });
+        }
+
+        if (title.trim().length > 255) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Goal title too long",
+            });
+        }
 
         const [member] = await db.query(
             `SELECT * FROM group_members
@@ -26,7 +41,14 @@ const createGoal = async (req, res) => {
                 req.user.id,
                 req.params.groupId,
                 title,
-                goal_date,
+                new Date()
+                    .toLocaleDateString(
+                        "en-CA",
+                        {
+                            timeZone:
+                                "Asia/Kolkata"
+                        }
+                    )
             ]
         );
 
@@ -47,6 +69,7 @@ const createGoal = async (req, res) => {
 
 const getGroupGoals = async (req, res) => {
     try {
+
         const [goals] = await db.query(
             `SELECT
         goals.*,
@@ -139,11 +162,69 @@ const verifyGoal = async (req, res) => {
                 message: "You cannot verify your own goal",
             });
         }
+
+        if (goal[0].verified_by) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Goal already verified",
+            });
+        }
+
+        const [member] = await db.query(
+            `
+    SELECT *
+    FROM group_members
+    WHERE group_id = ?
+    AND user_id = ?
+    `,
+            [
+                goal[0].group_id,
+                req.user.id
+            ]
+        );
+
+        if (member.length === 0) {
+            return res.status(403).json({
+                success: false,
+                message:
+                    "You are not a member of this group",
+            });
+        }
+
+        if (!goal[0].proof_url) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Proof required before verification",
+            });
+        }
+
         await db.query(
-            `UPDATE goals
-       SET verified_by = ?
-       WHERE id = ?`,
-            [req.user.id, req.params.goalId]
+            `
+    UPDATE goals
+    SET
+        verified_by = ?,
+        verified_at = NOW(),
+        status = 'VERIFIED'
+    WHERE id = ?
+    `,
+            [
+                req.user.id,
+                req.params.goalId
+            ]
+        );
+
+        await db.query(
+            `
+    INSERT INTO notifications
+    (user_id, message)
+    VALUES (?, ?)
+    `,
+            [
+                goal[0].user_id,
+                `Your goal "${goal[0].title}" was verified 🎉`
+            ]
         );
 
         res.json({
@@ -182,6 +263,30 @@ const uploadProof = async (req, res) => {
                 success: false,
                 message:
                     "You can upload proof only for your own goals",
+            });
+        }
+
+        if (goal[0].verified_by) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Verified goal cannot be modified",
+            });
+        }
+
+        if (goal[0].proof_url) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Proof already uploaded",
+            });
+        }
+
+        if (goal[0].status !== "COMPLETED") {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Complete the goal first",
             });
         }
 
@@ -274,28 +379,53 @@ const getMyStreak = async (req, res) => {
     try {
 
         const [goals] = await db.query(
-            `SELECT DISTINCT DATE_FORMAT(goal_date, '%Y-%m-%d') AS goal_date
-     FROM goals
-     WHERE user_id = ?
-     AND verified_by IS NOT NULL
-     ORDER BY goal_date DESC`,
+            `
+    SELECT DISTINCT
+        DATE_FORMAT(
+            verified_at,
+            '%Y-%m-%d'
+        ) AS verified_date
+    FROM goals
+    WHERE user_id = ?
+    AND verified_at IS NOT NULL
+    ORDER BY verified_date DESC
+    `,
             [req.user.id]
         );
 
         const dates = goals.map(
-            (goal) => goal.goal_date
+            (goal) => goal.verified_date
         );
 
         let currentStreak = 0;
 
         let checkDate = new Date();
 
+        const today =
+            checkDate.toLocaleDateString(
+                "en-CA",
+                {
+                    timeZone: "Asia/Kolkata",
+                }
+            );
+
+        if (!dates.includes(today)) {
+
+            checkDate.setDate(
+                checkDate.getDate() - 1
+            );
+
+        }
+
         while (true) {
 
             const dateString =
-                checkDate
-                    .toISOString()
-                    .split("T")[0];
+                checkDate.toLocaleDateString(
+                    "en-CA",
+                    {
+                        timeZone: "Asia/Kolkata",
+                    }
+                );
 
 
             if (dates.includes(dateString)) {
@@ -342,6 +472,14 @@ const deleteGoal = async (req, res) => {
             });
         }
 
+        if (goal[0].verified_by) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Verified goals cannot be deleted",
+            });
+        }
+
         if (goal[0].user_id !== req.user.id) {
             return res.status(403).json({
                 success: false,
@@ -368,6 +506,61 @@ const deleteGoal = async (req, res) => {
         });
     }
 };
+const getTodayProgress = async (req, res) => {
+
+    try {
+
+        const [todayGoals] =
+            await db.query(
+                `
+                SELECT COUNT(*) as count
+                FROM goals
+                WHERE user_id = ?
+                AND goal_date = CURDATE()
+                `,
+                [req.user.id]
+            );
+
+        const [completedToday] =
+            await db.query(
+                `
+                SELECT COUNT(*) as count
+                FROM goals
+                WHERE user_id = ?
+                AND goal_date = CURDATE()
+                AND verified_by IS NOT NULL
+                `,
+                [req.user.id]
+            );
+
+        const total =
+            todayGoals[0].count;
+
+        const completed =
+            completedToday[0].count;
+
+        const remaining =
+            total - completed;
+
+        res.json({
+            success: true,
+            total,
+            completed,
+            remaining,
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+        });
+
+    }
+
+};
 
 module.exports = {
     createGoal,
@@ -378,4 +571,5 @@ module.exports = {
     getMyStreak,
     uploadProof,
     deleteGoal,
+    getTodayProgress,
 };

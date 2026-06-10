@@ -1,21 +1,13 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/goals";
+import api from "./api";
 
 export const createGoal = async (
   groupId,
   goalData
 ) => {
-  const token = localStorage.getItem("token");
 
-  const response = await axios.post(
-    `${API_URL}/${groupId}`,
+  const response = await api.post(
+    `/goals/${groupId}`,
     goalData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
   );
 
   return response.data;
@@ -25,47 +17,29 @@ export const updateGoalStatus = async (
   goalId,
   status
 ) => {
-  const token = localStorage.getItem("token");
 
-  const response = await axios.put(
-    `${API_URL}/${goalId}/status`,
+  const response = await api.put(
+    `/goals/${goalId}/status`,
     { status },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
   );
 
   return response.data;
 };
 
 export const verifyGoal = async (goalId) => {
-  const token = localStorage.getItem("token");
 
-  const response = await axios.put(
-    `${API_URL}/${goalId}/verify`,
+  const response = await api.put(
+    `/goals/${goalId}/verify`,
     {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
   );
 
   return response.data;
 };
 
 export const deleteGoal = async (goalId) => {
-  const token = localStorage.getItem("token");
 
-  const response = await axios.delete(
-    `${API_URL}/${goalId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+  const response = await api.delete(
+    `/goals/${goalId}`,
   );
 
   return response.data;

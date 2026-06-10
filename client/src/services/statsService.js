@@ -1,17 +1,9 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api/goals";
+import api from "./api";
 
 export const getMyStats = async () => {
-  const token = localStorage.getItem("token");
 
-  const response = await axios.get(
-    `${API_URL}/stats/me`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+  const response = await api.get(
+    `/goals/stats/me`,
   );
 
   return response.data;
@@ -20,18 +12,22 @@ export const getMyStats = async () => {
 export const getMyStreak =
   async () => {
 
-    const token =
-      localStorage.getItem("token");
+    const response =
+      await api.get(
+        "/goals/streak/me",
+        
+      );
+
+    return response.data;
+  };
+
+  
+export const getTodayProgress =
+  async () => {
 
     const response =
-      await axios.get(
-        "http://localhost:5000/api/goals/streak/me",
-        {
-          headers: {
-            Authorization:
-              `Bearer ${token}`,
-          },
-        }
+      await api.get(
+        "/goals/today-progress",
       );
 
     return response.data;

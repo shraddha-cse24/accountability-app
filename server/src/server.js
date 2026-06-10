@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+require("./cronJobs");
 const db = require("./config/db");
 const app = express();
 const authRoutes = require("./routes/authRoutes");
@@ -7,6 +8,7 @@ const groupRoutes = require("./routes/groupRoutes");
 const goalRoutes = require("./routes/goalRoutes");
 const checkinRoutes = require("./routes/checkinRoutes");
 const invitationRoutes = require("./routes/invitationRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +23,10 @@ app.use("/api/checkins", checkinRoutes);
 app.use(
   "/api/invitations",
   invitationRoutes
+);
+app.use(
+    "/api/notifications",
+    notificationRoutes
 );
 
 app.get("/api/health", (req, res) => {

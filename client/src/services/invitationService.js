@@ -1,20 +1,10 @@
-import axios from "axios";
-
-const API_URL =
-  "http://localhost:5000/api/invitations";
+import api from "./api";
 
 export const getMyInvitations =
   async () => {
-    const token =
-      localStorage.getItem("token");
 
-    const response = await axios.get(
-      `${API_URL}/my`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const response = await api.get(
+      `/invitations/my`,
     );
 
     return response.data;
@@ -22,17 +12,10 @@ export const getMyInvitations =
 
 export const acceptInvitation =
   async (invitationId) => {
-    const token =
-      localStorage.getItem("token");
 
-    const response = await axios.put(
-      `${API_URL}/${invitationId}/accept`,
+    const response = await api.put(
+      `/invitations/${invitationId}/accept`,
       {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
     );
 
     return response.data;
@@ -40,17 +23,10 @@ export const acceptInvitation =
 
 export const rejectInvitation =
   async (invitationId) => {
-    const token =
-      localStorage.getItem("token");
 
-    const response = await axios.put(
-      `${API_URL}/${invitationId}/reject`,
+    const response = await api.put(
+      `/invitations/${invitationId}/reject`,
       {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
     );
 
     return response.data;
