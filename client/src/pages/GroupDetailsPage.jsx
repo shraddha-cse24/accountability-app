@@ -369,21 +369,12 @@ function GroupDetailsPage() {
                 <div className="mb-10">
                     <div className="flex flex-col gap-4">
 
-                        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                        <div className="flex items-center justify-between gap-4">
                             <div className="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full text-sm font-medium">
                                 Commitly Group
                             </div>
 
                             <div className="flex flex-wrap items-center gap-3">
-
-                                {isOwner && (
-                                    <button
-                                        onClick={handleDeleteGroup}
-                                        className="px-3 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium hover:bg-rose-100 transition"
-                                    >
-                                        Delete
-                                    </button>
-                                )}
 
                                 {!isOwner && (
                                     <button
@@ -396,7 +387,7 @@ function GroupDetailsPage() {
 
                                 <button
                                     onClick={() => navigate("/dashboard")}
-                                    className="px-4 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium hover:bg-rose-100 transition"
+                                    className="text-slate-500 hover:text-rose-600 transition"
                                 >
                                     ← Back
                                 </button>
@@ -405,9 +396,22 @@ function GroupDetailsPage() {
                         </div>
 
                         <div>
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.35] bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
-                                {groupData.group.name}
-                            </h1>
+                            <div className="flex items-start justify-between gap-3">
+
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.35] bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
+                                    {groupData.group.name}
+                                </h1>
+
+                                {isOwner && (
+                                    <button
+                                        onClick={handleDeleteGroup}
+                                        className="text-red-600 font-semibold hover:text-red-700"
+                                    >
+                                        Delete
+                                    </button>
+                                )}
+
+                            </div>
 
                             <p className="text-slate-500 mt-3 text-lg ">
                                 {groupData.group.description ||
@@ -700,7 +704,7 @@ function GroupDetailsPage() {
                                         <img
                                             src={goal.proof_url}
                                             alt="Proof"
-                                            className="w-full max-w-xs rounded-2xl border border-rose-100 shadow-sm"
+                                            className="w-full sm:w-80 rounded-2xl border border-rose-100 shadow-sm"
                                             onError={(e) => {
                                                 e.target.onerror = null;
                                                 e.target.src =

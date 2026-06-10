@@ -66,81 +66,63 @@ function GroupHistoryPage() {
             <div className="max-w-6xl mx-auto px-6 py-10">
 
                 {/* Header */}
-                <div className="mb-10">
+                <div className="mb-6">
 
-                    <button
-                        onClick={() =>
-                            navigate(`/group/${groupId}`)
-                        }
-                        className="inline-flex items-center gap-2 text-slate-600 hover:text-rose-600 transition mb-5"                    >
-                        ← Back
-                    </button>
+                    <div className="flex items-center gap-3 mb-3">
 
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
-                        History
-                    </h1>
+                        <button
+                            onClick={() =>
+                                navigate(`/group/${groupId}`)
+                            }
+                            className="text-slate-500 hover:text-rose-600 transition"
+                        >
+                            ← Back
+                        </button>
 
-                    <p className="text-slate-500 mt-3 text-lg">
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
+                            History
+                        </h1>
+
+                    </div>
+
+                    <p className="text-slate-500">
                         Review previous goals and progress.
                     </p>
 
                 </div>
 
-                {/* Filter Card */}
-                <div className="bg-white rounded-3xl p-6 shadow-md border border-rose-100 mb-8">
+                <div className="flex gap-3 items-center mb-6">
 
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <select
+                        value={filter}
+                        onChange={(e) =>
+                            setFilter(e.target.value)
+                        }
+                        className="flex-1 px-4 py-3 border border-rose-200 rounded-xl bg-white"
+                    >
+                        <option value="7">
+                            Last 7 Days
+                        </option>
 
-                        <div>
+                        <option value="30">
+                            Last 30 Days
+                        </option>
 
-                            <h2 className="text-xl font-semibold text-slate-900">
-                                Filter History
-                            </h2>
+                        <option value="90">
+                            Last 90 Days
+                        </option>
 
-                            <p className="text-slate-500 text-sm mt-1">
-                                Choose how much history to view
-                            </p>
+                        <option value="all">
+                            All Time
+                        </option>
 
-                        </div>
-
-                        <select
-                            value={filter}
-                            onChange={(e) =>
-                                setFilter(
-                                    e.target.value
-                                )
-                            }
-                            className="px-4 py-3 border border-rose-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        >
-                            <option value="7">
-                                Last 7 Days
-                            </option>
-
-                            <option value="30">
-                                Last 30 Days
-                            </option>
-
-                            <option value="90">
-                                Last 90 Days
-                            </option>
-
-                            <option value="all">
-                                All Time
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <div className="flex justify-end mb-6">
+                    </select>
 
                     <button
                         onClick={handleClearHistory}
-                        className="px-4 py-2 rounded-xl bg-rose-600 text-white hover:bg-rose-700 transition "
+                        className="px-4 py-3 rounded-xl bg-rose-600 text-white hover:bg-rose-700 transition"
                     >
-                        🗑 Clear History
+                        🗑
                     </button>
 
                 </div>
