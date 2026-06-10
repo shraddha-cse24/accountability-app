@@ -372,12 +372,12 @@ function GroupDetailsPage() {
                 <div className="mb-10">
                     <div className="flex flex-col gap-4">
 
-                        <div className="flex justify-between items-start">
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                             <div className="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 py-2 rounded-full text-sm font-medium">
                                 Commitly Group
                             </div>
 
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-wrap items-center gap-3">
 
                                 {isOwner && (
                                     <button
@@ -434,7 +434,7 @@ function GroupDetailsPage() {
                             Add a new goal and track your progress.
                         </p>
 
-                        <div className="flex gap-3">
+                        <div className="flex flex-col sm:flex-row gap-3">
                             <input
                                 type="text"
                                 placeholder="Enter your goal..."
@@ -465,7 +465,7 @@ function GroupDetailsPage() {
                                 Add friends and build accountability.
                             </p>
 
-                            <div className="flex gap-3">
+                            <div className="flex flex-col sm:flex-row gap-3">
                                 <input
                                     type="email"
                                     placeholder="Friend email..."
@@ -611,7 +611,7 @@ function GroupDetailsPage() {
                 </div>
 
                 {/* Goals Header */}
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
 
                     <div>
                         <h2 className="text-3xl font-bold text-slate-900">
@@ -673,7 +673,7 @@ function GroupDetailsPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-3">
+                                <div className="flex flex-wrap items-center gap-3">
 
                                     {goal.user_id === currentUserId &&
                                         !goal.verified_by && (
@@ -708,8 +708,8 @@ function GroupDetailsPage() {
                                 </div>
                             </div>
 
-                            {goal.proof_url && (
-                                <div className="mt-6">
+                            {goal.proof_url ? (
+                                <div className="mt-4">
                                     <a
                                         href={`${SERVER_URL}${goal.proof_url}`}
                                         target="_blank"
@@ -718,10 +718,19 @@ function GroupDetailsPage() {
                                         <img
                                             src={`${SERVER_URL}${goal.proof_url}`}
                                             alt="Proof"
-                                            className="w-full max-w-xs rounded-2xl border border-rose-100 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all"
+                                            className="w-full max-w-xs rounded-2xl border border-rose-100 shadow-sm"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src =
+                                                    "https://placehold.co/400x250?text=Proof+Unavailable";
+                                            }}
                                         />
                                     </a>
                                 </div>
+                            ) : (
+                                <p className="text-slate-400 mt-3">
+                                    No proof uploaded
+                                </p>
                             )}
 
                             {goal.user_id === currentUserId &&
