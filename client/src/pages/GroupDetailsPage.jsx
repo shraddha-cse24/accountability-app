@@ -405,9 +405,9 @@ function GroupDetailsPage() {
                                 {isOwner && (
                                     <button
                                         onClick={handleDeleteGroup}
-                                        className="text-red-600 font-semibold hover:text-red-700"
+                                        className="text-red-500 hover:text-red-600 text-xl"
                                     >
-                                        Delete
+                                        🗑
                                     </button>
                                 )}
 

@@ -68,7 +68,11 @@ function GroupHistoryPage() {
                 {/* Header */}
                 <div className="mb-6">
 
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center justify-between mb-3">
+
+                        <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
+                            History
+                        </h1>
 
                         <button
                             onClick={() =>
@@ -79,13 +83,9 @@ function GroupHistoryPage() {
                             ← Back
                         </button>
 
-                        <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-700 via-pink-700 to-fuchsia-700 bg-clip-text text-transparent">
-                            History
-                        </h1>
-
                     </div>
 
-                    <p className="text-slate-500">
+                    <p className="text-slate-500 mb-5">
                         Review previous goals and progress.
                     </p>
 
