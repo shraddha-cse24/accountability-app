@@ -11,7 +11,7 @@ function ProfilePage() {
         useState(null);
     const [name, setName] =
         useState("");
-
+        
     const [streak, setStreak] =
         useState(null);
 

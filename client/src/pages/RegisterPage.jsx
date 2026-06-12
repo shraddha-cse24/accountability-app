@@ -4,6 +4,7 @@ import { registerUser } from "../services/authService";
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -22,6 +23,8 @@ function RegisterPage() {
     e.preventDefault();
 
     try {
+      setLoading(true);
+
       const data = await registerUser(formData);
 
       localStorage.setItem("token", data.token);
@@ -32,6 +35,8 @@ function RegisterPage() {
         error.response?.data?.message ||
         "Registration Failed"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,9 +116,10 @@ function RegisterPage() {
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white font-semibold hover:shadow-lg hover:scale-[1.01] transition-all duration-300"
+              disabled={loading}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-rose-600 to-fuchsia-700 text-white font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Create Account
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
             <div className="flex items-center my-6">
               <div className="flex-1 border-t border-slate-200"></div>
