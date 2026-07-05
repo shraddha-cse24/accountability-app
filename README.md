@@ -1,83 +1,216 @@
-# Commitly
+# 🎯 Commitly
 
-A full-stack accountability platform where users create goals, upload proof of completion, and get verified by friends or group members to stay consistent and achieve goals together.
+A modern full-stack accountability platform built with **React, Node.js, Express.js, MySQL, Tailwind CSS, and Cloudinary**, helping users stay consistent by setting daily goals, uploading proof of completion, and getting verified by friends or group members.
 
-## Features
+## 🌐 Live Demo
 
-* JWT Authentication
-* Goal Tracking
-* Proof Uploads (Cloudinary)
-* Group Creation & Management
-* Member Invitations
-* Peer Verification
-* Leaderboards
-* Achievements
-* Notifications
-* Goal History
-* Mobile Responsive UI
+- **Frontend:** https://commitly26.netlify.app
+- **Backend API:** https://your-backend-url.onrender.com
 
-## System Highlights
+---
 
-* 20+ REST APIs
-* 6 Relational Database Tables
-* JWT Authentication & Role-Based Access Control (RBAC)
-* Cloudinary Integration for Image Uploads
-* Group-Based Goal Tracking & Verification
-* Achievement & Leaderboard System
-* Responsive Design for Mobile and Desktop
+# 🚀 Features
 
-## Database Design
+### 🎯 Goal Management
+- Create daily goals
+- Track goal progress
+- View goal history
+- Delete completed goals automatically
 
-The application uses a relational MySQL database with 6 core tables:
+### 👥 Group Collaboration
+- Create accountability groups
+- Invite friends to join groups
+- Manage group members
+- Collaborate on shared goals
 
-* Users
-* Groups
-* Group Members
-* Goals
-* Group Invitations
-* Notifications
+### ✅ Proof Verification
+- Upload proof images using Cloudinary
+- Peer verification system
+- Verify goals submitted by group members
+- Maintain accountability through community validation
 
-These tables support authentication, group collaboration, goal tracking, proof verification, notifications, achievements, and leaderboard generation.
+### 🏆 Achievements & Leaderboards
+- Earn achievements for consistency
+- Track verified goal streaks
+- Group leaderboards
+- Performance-based rankings
 
-## Tech Stack
+### 🔔 Notifications
+- Group invitations
+- Goal verification updates
+- Achievement notifications
+- Member activity alerts
 
-**Frontend:** React.js, Tailwind CSS
+### 🔐 Authentication & Security
+- JWT Authentication
+- Secure password hashing
+- Protected API routes
+- Role-Based Access Control (RBAC)
 
-**Backend:** Node.js, Express.js
+### 📱 User Experience
+- Fully responsive UI
+- Clean and modern interface
+- Mobile-friendly design
+- Fast and intuitive navigation
 
-**Database:** MySQL
+---
 
-**Media Storage:** Cloudinary
+# ⚡ System Highlights
 
-**Deployment:** Netlify + Render
+- 20+ REST APIs
+- JWT Authentication & RBAC
+- Cloudinary Image Upload Integration
+- Peer Goal Verification System
+- Achievement & Leaderboard Module
+- Responsive Design
+- RESTful Backend Architecture
+- MySQL Relational Database
+- Secure Authentication Flow
 
-## Live Demo
+---
 
-https://commitly26.netlify.app
+# 🗄 Database Design
 
-## Key Functionalities
+The application uses a relational **MySQL** database consisting of six core tables:
 
-* Create and manage accountability groups
-* Invite members and collaborate on shared goals
-* Create daily goals and track progress
-* Upload proof images through Cloudinary
-* Verify completed goals submitted by group members
-* Earn achievements and track verified goal streaks
-* View leaderboards and goal history
-* Receive notifications for invitations and updates
+- Users
+- Groups
+- Group Members
+- Goals
+- Group Invitations
+- Notifications
 
-## Future Improvements
+These tables efficiently manage authentication, group collaboration, goal tracking, proof verification, notifications, achievements, and leaderboard generation.
 
-* Email Notifications
-* Advanced Analytics Dashboard
-* Group Activity Insights
-* Progressive Web App (PWA)
-* Dark Mode
+---
 
-## Author
+# 🛠 Tech Stack
+
+## Frontend
+
+- React.js
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
+
+## Backend
+
+- Node.js
+- Express.js
+- JWT Authentication
+- bcrypt.js
+- Multer
+
+## Database
+
+- MySQL
+
+## Media Storage
+
+- Cloudinary
+
+## Deployment
+
+- Netlify
+- Render
+
+---
+
+# 📂 Project Structure
+
+```text
+Commitly
+│
+├── backend
+│   ├── controllers
+│   ├── middleware
+│   ├── routes
+│   ├── config
+│   ├── uploads
+│   └── server.js
+│
+└── frontend
+    ├── src
+    ├── components
+    ├── pages
+    ├── services
+    ├── contexts
+    └── assets
+```
+
+---
+
+# ⚙️ Local Setup
+
+## Clone
+
+```bash
+git clone https://github.com/shraddha-cse24/Commitly.git
+```
+
+## Backend
+
+```bash
+cd backend
+
+npm install
+
+npm run dev
+```
+
+## Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+# 🔐 Environment Variables
+
+Configure the required environment variables for the database, JWT authentication, Cloudinary, and API endpoints before running the project locally.
+
+# 📸 Screenshots
+
+> Add screenshots here.
+
+- Landing Page
+- Dashboard
+- Group Details
+- Goal Verification
+- Leaderboard
+- Achievements
+- Notifications
+- Goal History
+
+---
+
+# 🚀 Future Improvements
+
+- 📧 Email Notifications
+- 📊 Advanced Analytics Dashboard
+- 📈 Progress Insights & Reports
+- 🌙 Dark Mode
+- 📱 Progressive Web App (PWA)
+- 📅 Calendar View
+- 🎖 More Achievement Badges
+
+---
+
+# 👩‍💻 Author
 
 **Shraddha Singh**
 
-GitHub: https://github.com/shraddha-cse24
+B.Tech CSE  
+IIITDM Jabalpur
 
-LinkedIn: https://www.linkedin.com/in/shraddha-singh-6a316a346/
+GitHub:  
+https://github.com/shraddha-cse24
+
+LinkedIn:  
+https://www.linkedin.com/in/shraddha-singh-6a316a346/
