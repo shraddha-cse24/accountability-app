@@ -5,7 +5,7 @@ A modern full-stack accountability platform built with **React, Node.js, Express
 ## 🌐 Live Demo
 
 - **Frontend:** https://commitly26.netlify.app
-- **Backend API:** https://your-backend-url.onrender.com
+- **Backend API:**  https://accountability-app-lj0r.onrender.com
 
 ---
 
